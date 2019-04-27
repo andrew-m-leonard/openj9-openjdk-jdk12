@@ -1,7 +1,8 @@
 /*
  * ===========================================================================
- * (c) Copyright IBM Corp. 2018, 2019 All Rights Reserved
+ * (c) Copyright IBM Corp. 2019, 2019 All Rights Reserved
  * ===========================================================================
+ *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
  * published by the Free Software Foundation.
@@ -17,8 +18,42 @@
  *
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, see <http://www.gnu.org/licenses/>.
+ *
  * ===========================================================================
  */
-module jdk.internal.vm.ci {
-  requires java.base;
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <dlfcn.h>
+#include "NativeCrypto_md.h"
+
+/* Load the crypto library (return NULL on error) */
+void * load_crypto_library() {
+    void * result = NULL;
+    
+    const char *libname = "libcrypto.1.1.dylib";
+    const char *oldname = "libcrypto.1.0.0.dylib";
+    const char *symlink = "libcrypto.dylib";
+
+    result = dlopen (libname,  RTLD_NOW);
+    if (result == NULL) {
+        result = dlopen (oldname,  RTLD_NOW);
+        if (result == NULL) {
+            result = dlopen (symlink,  RTLD_NOW);
+        }
+    }
+
+    return result;
+}
+
+/* Unload the crypto library */
+void unload_crypto_library(void *handle) {
+    (void)dlclose(handle);
+}
+
+/* Find the symbol in the crypto library (return NULL if not found) */
+void * find_crypto_symbol(void *handle, const char *symname) {
+    return  dlsym(handle, symname);
 }

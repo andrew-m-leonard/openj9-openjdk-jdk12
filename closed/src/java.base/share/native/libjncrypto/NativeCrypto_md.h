@@ -1,7 +1,8 @@
 /*
  * ===========================================================================
- * (c) Copyright IBM Corp. 2018, 2019 All Rights Reserved
+ * (c) Copyright IBM Corp. 2019, 2019 All Rights Reserved
  * ===========================================================================
+ *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
  * published by the Free Software Foundation.
@@ -17,8 +18,15 @@
  *
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, see <http://www.gnu.org/licenses/>.
+ *
  * ===========================================================================
  */
-module jdk.internal.vm.ci {
-  requires java.base;
-}
+
+#ifndef NATIVECRYPTO_MD_H
+#define NATIVECRYPTO_MD_H
+
+void * load_crypto_library();
+void   unload_crypto_library(void *handle);
+void * find_crypto_symbol(void *handle, const char *symname);
+
+#endif /* NATIVECRYPTO_MD_H */
